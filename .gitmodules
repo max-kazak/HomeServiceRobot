@@ -1,3 +1,6 @@
 [submodule "slam_gmapping"]
 	path = slam_gmapping
 	url = https://github.com/ros-perception/slam_gmapping
+[submodule "turtlebot"]
+	path = turtlebot
+	url = https://github.com/turtlebot/turtlebot
