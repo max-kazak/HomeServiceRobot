@@ -2700,6 +2700,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
+      <!--  
       <model name='tricycle'>
         <pose frame=''>-2.75308 -1.05434 0.050001 4e-06 1.6e-05 0.062113</pose>
         <scale>1 1 1</scale>
@@ -2780,6 +2781,7 @@
           <wrench>-0.084131 0.076395 0.07828 0 -0 0</wrench>
         </link>
       </model>
+      -->
       <light name='sun'>
         <pose frame=''>0 0 10 0 -0 0</pose>
       </light>
@@ -2791,6 +2793,7 @@
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+    <!-- 
     <model name='tricycle'>
       <link name='link_0_clone'>
         <pose frame=''>0.05011 -0.0238 0 0 -0 0</pose>
@@ -4231,6 +4234,7 @@
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>-1.42618 -0.586216 0 0 -0 0</pose>
     </model>
+    -->
     <model name='bookshelf_0'>
       <static>1</static>
       <link name='link'>
