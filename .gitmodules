@@ -7,6 +7,4 @@
 [submodule "turtlebot_interactions"]
 	path = turtlebot_interactions
 	url = https://github.com/turtlebot/turtlebot_interactions
-[submodule "turtlebot_simulator"]
-	path = turtlebot_simulator
-	url = https://github.com/turtlebot/turtlebot_simulator
+
