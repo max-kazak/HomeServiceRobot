@@ -8,3 +8,6 @@
 	path = turtlebot_interactions
 	url = https://github.com/turtlebot/turtlebot_interactions
 
+[submodule "pgm_map_creator"]
+	path = pgm_map_creator
+	url = https://github.com/udacity/pgm_map_creator.git
