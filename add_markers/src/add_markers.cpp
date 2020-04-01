@@ -7,8 +7,8 @@ struct location {
 	double theta;
 };
 
-location PICKUP = {2.36, -2.06, -1.1};
-location DROPOFF = {-3.86, 1.14, 0.88 };
+location PICKUP = {2, -2, -1};
+location DROPOFF = {-4, 1, 1};
 
 int main( int argc, char** argv )
 {
@@ -19,28 +19,28 @@ int main( int argc, char** argv )
 
   visualization_msgs::Marker marker;
   // Set the frame ID and timestamp.  See the TF tutorials for information on these.
-  marker.header.frame_id = "map";
+  marker.header.frame_id = "/map";
   marker.header.stamp = ros::Time::now();
 
   // Set the namespace and id for this marker.  This serves to create a unique ID
   // Any marker sent with the same namespace and id will overwrite the old one
-  marker.ns = "basic_shapes";
+  marker.ns = "virtual_object";
   marker.id = 0;
 
   // Set the marker type.  Initially this is CUBE, and cycles between that and SPHERE, ARROW, and CYLINDER
-  marker.type = visualization_msgs::Marker::CUBE;
+  marker.type = visualization_msgs::Marker::SPHERE;
 
   // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-  marker.pose.position.z = 0.0;
+  marker.pose.position.z = 0;
   marker.pose.orientation.x = 0.0;
   marker.pose.orientation.y = 0.0;
   marker.pose.orientation.z = 0.0;
   marker.pose.orientation.w = 1.0;
 
   // Set the scale of the marker -- 1x1x1 here means 1m on a side
-  marker.scale.x = 1.0;
-  marker.scale.y = 1.0;
-  marker.scale.z = 1.0;
+  marker.scale.x = 0.3;
+  marker.scale.y = 0.3;
+  marker.scale.z = 0.3;
 
   // Set the color -- be sure to set alpha to something non-zero!
   marker.color.r = 0.0f;
@@ -50,51 +50,47 @@ int main( int argc, char** argv )
 
   marker.lifetime = ros::Duration();
 
-  ROS_INFO("Place virtual object");
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.pose.position.x = 0;
-  marker.pose.position.y = 0;
-
-  while (ros::ok()) {
-	  marker_pub.publish(marker);
-	  ros::spin();
+  while (marker_pub.getNumSubscribers() < 1)
+  {
+	if (!ros::ok())
+	{
+	  return 0;
+	}
+	ROS_WARN_ONCE("Please create a subscriber to the marker");
+	sleep(1);
   }
 
+  while (ros::ok())
+  {
+    // Publish the marker
+    ROS_INFO("Place virtual object in pickup site");
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = PICKUP.x;
+    marker.pose.position.y = PICKUP.y;
+    marker_pub.publish(marker);
 
-//  while (ros::ok())
-//  {
-//    // Publish the marker
-//    ROS_INFO("Place virtual object in pickup site");
-//    marker.action = visualization_msgs::Marker::ADD;
-//    marker.pose.position.x = PICKUP.x;
-//    marker.pose.position.y = PICKUP.y;
-//    marker_pub.publish(marker);
-//
-//    sleep(5);
-//
-//    ROS_INFO("Remove virtual object from pickup site");
-//    marker.action = visualization_msgs::Marker::DELETE;
-//    marker_pub.publish(marker);
-//
-//    sleep(5);
-//
-//    ROS_INFO("Place virtual object in dropoff site");
-//    marker.action = visualization_msgs::Marker::ADD;
-//    marker.pose.position.x = DROPOFF.x;
-//    marker.pose.position.y = DROPOFF.y;
-//	marker_pub.publish(marker);
-//
-//	sleep(5);
-//
-//	ROS_INFO("Remove virtual object from dropoff site");
-//	marker.action = visualization_msgs::Marker::DELETE;
-//	marker_pub.publish(marker);
-//
-//	sleep(5);
-//  }
+    sleep(5);
 
-//  ros::spin();
-  sleep(100);
+    ROS_INFO("Remove virtual object from pickup site");
+    marker.action = visualization_msgs::Marker::DELETE;
+    marker_pub.publish(marker);
+
+    sleep(5);
+
+    ROS_INFO("Place virtual object in dropoff site");
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.pose.position.x = DROPOFF.x;
+    marker.pose.position.y = DROPOFF.y;
+	marker_pub.publish(marker);
+
+	sleep(5);
+
+	ROS_INFO("Remove virtual object from dropoff site");
+	marker.action = visualization_msgs::Marker::DELETE;
+	marker_pub.publish(marker);
+
+	sleep(5);
+  }
 
   return 0;
 }
