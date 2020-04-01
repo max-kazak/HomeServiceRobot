@@ -36,6 +36,7 @@ int main(int argc, char** argv){
   // Define a position and orientation for the robot to reach
   goal.target_pose.pose.position.x = PICKUP.x;
   goal.target_pose.pose.position.y = PICKUP.y;
+  goal.target_pose.pose.orientation.w = 1.0;
 
    // Send the goal position and orientation for the robot to reach
   ROS_INFO("Robot is navigating to the pickup site");
