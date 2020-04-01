@@ -5,11 +5,10 @@
 struct location {
 	double x;
 	double y;
-	double theta;
 };
 
-location PICKUP = {2.0, -2.0, -1.0};
-location DROPOFF = {-4.0, 1.0, 1.0};
+location PICKUP = {2.0, -2.0};
+location DROPOFF = {-4.0, 1.0};
 
 // Define a client for to send goal requests to the move_base server through a SimpleActionClient
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -37,7 +36,6 @@ int main(int argc, char** argv){
   // Define a position and orientation for the robot to reach
   goal.target_pose.pose.position.x = PICKUP.x;
   goal.target_pose.pose.position.y = PICKUP.y;
-  goal.target_pose.pose.orientation.w = PICKUP.theta;
 
    // Send the goal position and orientation for the robot to reach
   ROS_INFO("Robot is navigating to the pickup site");
@@ -56,7 +54,6 @@ int main(int argc, char** argv){
   	// Define a position and orientation for the robot to reach
   	goal.target_pose.pose.position.x = DROPOFF.x;
   	goal.target_pose.pose.position.y = DROPOFF.y;
-  	goal.target_pose.pose.orientation.w = DROPOFF.theta;
 
   	// Send the goal position and orientation for the robot to reach
   	ROS_INFO("Robot is navigating to the dropoff site");
