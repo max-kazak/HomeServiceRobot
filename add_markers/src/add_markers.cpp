@@ -1,18 +1,8 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
-#include <nav_msgs/Odometry.h>
+#include <std_msgs/Int8.h>
 #include <math.h>
-
-struct location {
-	double x;
-	double y;
-};
-
-const location PICKUP = {2, -2};
-const location DROPOFF = {-4, 1};
-
-const double DISTANCE_THRESHOLD = 0.15;
-const int WAIT_TIME = 5;
+#include "pick_objects/pick_objects.h"
 
 class VirtualObjectManager
 {
@@ -28,8 +18,8 @@ public:
 			sleep(1);
 		}
 
-    //subscribe to odometry topic
-    odom_sub_ = n_.subscribe("/odom", 1000, &VirtualObjectManager::callback, this);
+    //subscribe to robot_state topic
+    state_sub_ = n_.subscribe("/home_robot_state", 2, &VirtualObjectManager::callback, this);
 
     //Create Marker
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
@@ -66,8 +56,6 @@ public:
 
     // Put marker in pickup location
     put_virtual_object(PICKUP.x, PICKUP.y);
-    state_ = atPickup;
-
   }
 
   void put_virtual_object(double x, double y)
@@ -86,46 +74,33 @@ public:
 		marker_pub_.publish(virtual_object_);
   }
 
-  void callback(const nav_msgs::Odometry::ConstPtr& msg)
+  void callback(const std_msgs::Int8 msg)
   {
-  	location robot = {-msg->pose.pose.position.x, -msg->pose.pose.position.y}; // rotate robot coordinates 180
-  	ROS_INFO("Robot is currently at ([%f], [%f])", robot.x, robot.y);
-  	switch (state_) {
-  		case atPickup:
-  		{
-  			// Calculate distance to pickup site
-  			double dist = sqrt(pow(robot.x - PICKUP.x, 2) + pow(robot.y - PICKUP.y, 2));
-  			ROS_INFO("Distance to pickup is [%f]", dist);
-  			if (dist < DISTANCE_THRESHOLD) {
-  				rm_virtual_object();
-  				sleep(WAIT_TIME);
-  				state_ = pickedUp;
-  			}
-  			break;
-  		}
-  		case pickedUp:
-  		{
-  			// Calculate distance to dropoff site
-				double dist = sqrt(pow(robot.x - DROPOFF.x, 2) + pow(robot.y - DROPOFF.y, 2));
-				ROS_INFO("Distance to dropoff is [%f]", dist);
-				if (dist < DISTANCE_THRESHOLD) {
-					put_virtual_object(DROPOFF.x, DROPOFF.y);
-					state_ = atDropoff;
-				}
-  			break;
-  		}
-  		case atDropoff:
-  			// goal achieved
-  			break;
+  	HomeRobotState robot_state = (HomeRobotState)msg.data;
+
+  	switch (robot_state) {
+  	case nav2PickUp:
+    	ROS_INFO("Robot is currently in nav2PickUp state.");
+    	break;
+		case pickingUp:
+			ROS_INFO("Robot is currently in pickingUp state.");
+			rm_virtual_object();
+			break;
+		case nav2DropOff:
+	  	ROS_INFO("Robot is currently in nav2DropOff state.");
+	  	break;
+		case droppingOff:
+			ROS_INFO("Robot is currently in droppingOff state.");
+			put_virtual_object(DROPOFF.x, DROPOFF.y);
+			break;
   	}
   }
 
 private:
   ros::NodeHandle n_;
   ros::Publisher marker_pub_;
-  ros::Subscriber odom_sub_;
+  ros::Subscriber state_sub_;
   visualization_msgs::Marker virtual_object_;
-  enum State {atPickup, pickedUp, atDropoff} state_;  // virtual object state
 
 };//End of class VirtualObjectManager
 
