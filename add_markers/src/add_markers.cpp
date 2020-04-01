@@ -11,7 +11,7 @@ struct location {
 const location PICKUP = {2, -2};
 const location DROPOFF = {-4, 1};
 
-const double DISTANCE_THRESHOLD = 0.01;
+const double DISTANCE_THRESHOLD = 0.15;
 const int WAIT_TIME = 5;
 
 class VirtualObjectManager
@@ -88,12 +88,14 @@ public:
 
   void callback(const nav_msgs::Odometry::ConstPtr& msg)
   {
-  	location robot = {msg->pose.pose.position.x, msg->pose.pose.position.y};
+  	location robot = {-msg->pose.pose.position.x, -msg->pose.pose.position.y}; // rotate robot coordinates 180
+  	ROS_INFO("Robot is currently at ([%f], [%f])", robot.x, robot.y);
   	switch (state_) {
   		case atPickup:
   		{
   			// Calculate distance to pickup site
   			double dist = sqrt(pow(robot.x - PICKUP.x, 2) + pow(robot.y - PICKUP.y, 2));
+  			ROS_INFO("Distance to pickup is [%f]", dist);
   			if (dist < DISTANCE_THRESHOLD) {
   				rm_virtual_object();
   				sleep(WAIT_TIME);
@@ -105,6 +107,7 @@ public:
   		{
   			// Calculate distance to dropoff site
 				double dist = sqrt(pow(robot.x - DROPOFF.x, 2) + pow(robot.y - DROPOFF.y, 2));
+				ROS_INFO("Distance to dropoff is [%f]", dist);
 				if (dist < DISTANCE_THRESHOLD) {
 					put_virtual_object(DROPOFF.x, DROPOFF.y);
 					state_ = atDropoff;
