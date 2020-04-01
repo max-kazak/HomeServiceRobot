@@ -8,8 +8,8 @@ struct location {
 	double theta;
 };
 
-location PICKUP = {-3.86, 1.14, 0.88 };
-location DROPOFF = {2.36, -2.06, -1.1};
+location PICKUP = {2.0, -2.0, -1.0};
+location DROPOFF = {-4.0, 1.0, 1.0};
 
 // Define a client for to send goal requests to the move_base server through a SimpleActionClient
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -73,5 +73,8 @@ int main(int argc, char** argv){
   } else {
     ROS_INFO("Robot was unable to reach pickup site for some reason");
   }
+
+  ros::spin();
+
   return 0;
 }
